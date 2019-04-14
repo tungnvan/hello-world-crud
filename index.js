@@ -1,43 +1,14 @@
 const http = require('http');
 const url = require('url');
-const host = 'localhost';
-const port = 2000;
+const {ROUTES_CONFIG} = require('./routes/routes-config');
+const {invalidMethod} = require('./controllers/invalid-controller');
 
-function readWorld() {
-    return 'world';
-};
-
-function createWorld() {
-    return 'world created';
-};
-
-function updateWorld() {
-    return 'world updated';
-};
-
-function deleteWorld() {
-    return 'world deleted';
-};
-
-function invalidMethod() {
-    return 'Invalid method!';
-};
-
-const routeConfig = [
-    {
-        path: '/hello',
-        acts: {
-            'GET': readWorld,
-            'POST': createWorld,
-            'PUT': updateWorld,
-            'DELETE': deleteWorld,
-        },
-    }
-];
+const host = process.env.HOST;
+const port = process.env.PORT;
 
 const server = http.createServer((req, res) => {
     const location = url.parse(req.url);
-    const foundConfig = routeConfig.find(route => route.path === location.pathname);
+    const foundConfig = ROUTES_CONFIG.find(route => route.path === location.pathname);
     const message = foundConfig
         ? (foundConfig.acts[req.method] || invalidMethod)()
         : 'URL not found!';
